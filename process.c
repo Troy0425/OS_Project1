@@ -50,7 +50,6 @@ int create_proc(struct process *proc){
 		syscall(my_get_time, &end_sec, &end_nsec);
 		sprintf(dmesg_buffer, "[Project 1] %d %010lu.%09lu %010lu.%09lu", getpid(), start_sec, start_nsec, end_sec, end_nsec);
 		syscall(my_printk, dmesg_buffer);
-		printf("%s used time %lf\n", proc->name, (end_sec + end_nsec*1e-9) - (start_sec + start_nsec*1e-9));
 		exit(0);
     }else{
         assign_cpu(pid, proc_cpu);
