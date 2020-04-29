@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include "process.h"
 #include "scheduler.h"
-
 int main(int argc, char* argv[]){
     char policy_buffer[32];
     int num_proc;

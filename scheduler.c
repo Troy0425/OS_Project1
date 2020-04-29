@@ -59,7 +59,6 @@ int schedule(struct process *proc, int num_proc, int policy){
     set_high(getpid());
 	
 	for(int i = 0; i < num_proc; i++){
-		proc[i].s_time = -1;
 		proc[i].pid = -1;
 	}
     now_time = 0;
@@ -76,8 +75,6 @@ int schedule(struct process *proc, int num_proc, int policy){
         int next_proc = cal_next_proc(proc, num_proc, policy);
         if(next_proc != -1){
             if(next_proc != running_proc){
-				if(proc[next_proc].s_time == -1)
-					proc[next_proc].s_time = now_time;
                 set_high(proc[next_proc].pid);
 				if(running_proc != -1)
                		set_low(proc[running_proc].pid);
@@ -89,7 +86,7 @@ int schedule(struct process *proc, int num_proc, int policy){
         if(running_proc != -1){
             proc[running_proc].e_time--;
             if(proc[running_proc].e_time == 0){
-				printf("%s theorical used time %d\n", proc[running_proc].name, now_time - proc[running_proc].s_time +1);
+				printf("%s theorical finish time %d\n", proc[running_proc].name, now_time);
                 waitpid(proc[running_proc].pid, NULL, 0);
                 running_proc = -1;
                 num_finish++;

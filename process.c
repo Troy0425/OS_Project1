@@ -39,8 +39,8 @@ int create_proc(struct process *proc){
     if(pid == 0){
 		printf("%s %d\n", proc->name, getpid());
         unsigned long start_sec, start_nsec, end_sec, end_nsec;
-		char dmesg_buffer[70];
 		syscall(my_get_time, &start_sec, &start_nsec);
+		char dmesg_buffer[70];
 		for(int i = 0; i < proc->e_time; i++){
 			//if(i % 100 == 0){
 			//	printf("%s i = %d\n", proc->name, i);
