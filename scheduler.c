@@ -86,7 +86,7 @@ int schedule(struct process *proc, int num_proc, int policy){
         if(running_proc != -1){
             proc[running_proc].e_time--;
             if(proc[running_proc].e_time == 0){
-				printf("%s theorical used time %d\n", proc[running_proc].name, now_time - proc[running_proc],r_time + 1);
+				printf("%s theorical used time %d\n", proc[running_proc].name, now_time - proc[running_proc].r_time + 1);
                 waitpid(proc[running_proc].pid, NULL, 0);
                 running_proc = -1;
                 num_finish++;
