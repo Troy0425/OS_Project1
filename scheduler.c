@@ -11,6 +11,22 @@ static int now_time;
 static int running_proc;
 static int num_finish;
 static int last_time;
+static int queue[25];
+static int front;
+static int back;
+void push(int i){
+    queue[back] = i;
+    back = (back+1) % 25;
+}
+void pop(){
+    front = (front+1) % 25;
+}
+int top(){
+    return queue[front];
+}
+int empty(){
+    return (front == back);
+}
 int cal_next_proc(struct process *proc, int num_proc, int policy){
     if(policy == FIFO || policy == SJF){ //non-preemptive    
         if(running_proc != -1)
@@ -33,20 +49,17 @@ int cal_next_proc(struct process *proc, int num_proc, int policy){
         }
     }else if(policy == RR){
         if(running_proc == -1){
-			for(int i = 0; i < num_proc; i++){
-				if(proc[i].pid != -1 && proc[i].e_time != 0){
-					next = i;
-					break;
-				} 
-			}
+            if(!empty()){
+                next = top();
+                pop();
+            }
         }else if((now_time - last_time) % 500 == 0){
-            next = running_proc;
-            for(int i = 1; i < num_proc; i++){
-                int tmp = (running_proc + i) % num_proc;
-                if(proc[tmp].pid != -1 && proc[tmp].e_time != 0){
-                    next = tmp;
-                    break;
-                }
+            if(empty())
+                next = running_proc;
+            else{
+                next = top();
+                pop();
+                push(running_proc);
             }
         }else{
             next = running_proc;
@@ -57,7 +70,10 @@ int cal_next_proc(struct process *proc, int num_proc, int policy){
 int schedule(struct process *proc, int num_proc, int policy){
     assign_cpu(getpid(), scheduler_cpu);
     set_high(getpid());
-	
+	if(policy == RR){
+        front = 0;
+        back = 0;
+    }
 	for(int i = 0; i < num_proc; i++){
 		proc[i].pid = -1;
 	}
@@ -70,6 +86,8 @@ int schedule(struct process *proc, int num_proc, int policy){
             if(proc[i].r_time == now_time){
                 proc[i].pid = create_proc(&proc[i]);
                 set_low(proc[i].pid);
+                if(policy == RR)
+                    push(i);
             }
         }
         int next_proc = cal_next_proc(proc, num_proc, policy);
